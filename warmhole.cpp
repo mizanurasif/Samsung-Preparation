@@ -1,58 +1,85 @@
-// dijkstra
-
 #include<bits/stdc++.h>
 using namespace std;
 int main()
 {
-    int t,c=0;
+    int t,n,x1,x2,y1,y2,w;
     cin>>t;
     while(t--)
     {
-        c++;
-        int n,m,x,y,w;
         cin>>n;
-        int cost[n+1];
+        int cnt=1;
+        map<pair<int,int>,int>mp;
+        vector<pair<int,int>>ver;
+        cin>>x1>>y1>>x2>>y2;
+
+        mp[ {x1,y1}]=cnt;
+        cnt++;
+        ver.push_back({x1,y1});
+        mp[ {x2,y2}]=cnt;
+        cnt++;
+        ver.push_back({x2,y2});
+        int cost[15][15];
+        for(int i=0; i<15; i++)
+        {
+            for(int j=0; j<15; j++)
+            {
+                cost[i][j]=1e9;
+            }
+        }
         for(int i=1; i<=n; i++)
         {
-            cin>>cost[i];
-        }
-        vector<pair<int,int>>adj;
-        cin>>m;
-        for(int i=0; i<m; i++)
-        {
-            cin>>x>>y;
-            adj.push_back({x,y});
-        }
-        vector<int>dis(n+1,INT_MAX);
-        dis[1]=0;
-        for(int i=0; i<n-1; i++)
-        {
-            int flag=0;
-            for(int j=0; j<adj.size(); j++)
+            cin>>x1>>y1>>x2>>y2>>w;
+            if( mp[ {x1,y1}]==0)
             {
-                int u=adj[j].first;
-                int v=adj[j].second;
-                int w=(cost[v]-cost[u])*(cost[v]-cost[u])*(cost[v]-cost[u]);
-                if(dis[u]+w < dis[v])
+                mp[ {x1,y1}]=cnt;
+                cnt++;
+                ver.push_back({x1,y1});
+                
+            }
+            if( mp[ {x2,y2}]==0)
+            {
+                mp[ {x2,y2}]=cnt;
+                cnt++;
+                ver.push_back({x2,y2});
+            }
+
+            cost[mp[ {x1,y1}]][mp[ {x2,y2}]]=w;
+             cost[mp[ {x2,y2}]][mp[ {x1,y1}]]=w;
+
+        }
+        n=cnt;
+
+//        for(int i=0; i<n; i++)
+//        {
+//            for(int j=0; j<n; j++)
+//            {
+//                cout<<cost[i][j]<<" ";
+//            }
+//            cout<<endl;
+//        }
+        vector<int>dis(n,INT_MAX);
+        dis[1]=0;
+        priority_queue<pair<int,int>>q;
+        q.push({0,1});
+        while(!q.empty())
+        {
+            int u=q.top().second;
+            q.pop();
+            for(int v=1; v<n; v++)
+            {
+                 int w=min(cost[u][v],abs(ver[u-1].first-ver[v-1].first)+abs(ver[u-1].second-ver[v-1].second));
+               // cout<<w<<endl;
+                if(u!=v && dis[v]>dis[u]+w)
                 {
                     dis[v]=dis[u]+w;
-                    flag=1;
+                    q.push({-dis[v],v});
                 }
             }
-            if(!flag)
-                break;
         }
+//        for(int i=0; i<n; i++)
+//            cout<<dis[i]<<" ";
+ //       cout<<endl;
+        cout<<dis[2]<<endl;
 
-        cout<<"Case "<<c<<":"<<endl;
-        int q;
-        cin>>q;
-        while(q--)
-        {
-            cin>>x;
-            if(dis[x]< 3 || dis[x]==INT_MAX)
-                cout<<"?"<<endl;
-            else
-                cout<<dis[x]<<endl;
-        }
     }
 }
