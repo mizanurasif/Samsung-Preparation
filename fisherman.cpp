@@ -1,4 +1,4 @@
-//all possible solution recursion + breaktrack
+//all possible solution recursion + backtrack
 
 #include<iostream>
 #include<vector>
